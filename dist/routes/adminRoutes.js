@@ -64,4 +64,5 @@ router.get('/inbox', inboxController_1.default.listThreads);
 router.get('/inbox/:threadId', inboxController_1.default.getThread);
 router.post('/inbox/:threadId/reply', inboxController_1.default.replyToThread);
 router.put('/inbox/:threadId/status', inboxController_1.default.updateThreadStatus);
+router.get('/inbox/messages/:messageId/attachments/:attachmentId', inboxController_1.default.getMessageAttachmentUrl);
 exports.default = router;

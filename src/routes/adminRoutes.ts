@@ -78,5 +78,9 @@ router.get('/inbox', InboxController.listThreads);
 router.get('/inbox/:threadId', InboxController.getThread);
 router.post('/inbox/:threadId/reply', InboxController.replyToThread);
 router.put('/inbox/:threadId/status', InboxController.updateThreadStatus);
+router.get(
+  '/inbox/messages/:messageId/attachments/:attachmentId',
+  InboxController.getMessageAttachmentUrl
+);
 
 export default router;

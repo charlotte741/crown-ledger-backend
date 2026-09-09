@@ -45,6 +45,19 @@ const { error } = await this.resend.emails.send({
     }
   }
 
+    async getReceivedAttachment(emailId: string, attachmentId: string): Promise<any> {
+    const { data, error } = await this.resend.emails.receiving.attachments.get({
+      id: attachmentId,
+      emailId,
+    });
+    if (error) {
+      throw new Error(error.message);
+    }
+    return data;
+  }
+
+  
+
     /**
    * Verifies a Resend inbound/lifecycle webhook using Svix-style signing.
    * `payload` MUST be the raw request body string, not a re-serialized object.

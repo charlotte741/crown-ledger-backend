@@ -234,6 +234,42 @@ class InboxController {
         }
     }
     /**
+   * Returns a fresh signed download URL for one attachment on a message.
+   * @route GET /api/admin/inbox/messages/:messageId/attachments/:attachmentId
+   * @access Private (Admin only)
+   */
+    async getMessageAttachmentUrl(req, res) {
+        try {
+            const messageId = Array.isArray(req.params.messageId) ? req.params.messageId[0] : req.params.messageId;
+            const attachmentId = Array.isArray(req.params.attachmentId) ? req.params.attachmentId[0] : req.params.attachmentId;
+            const message = await InboxMessage_1.default.findById(messageId);
+            if (!message || !message.resendEmailId) {
+                res.status(404).json({ success: false, message: 'Message or attachment not found' });
+                return;
+            }
+            const attachmentMeta = message.attachments.find((a) => a.resendAttachmentId === attachmentId);
+            if (!attachmentMeta) {
+                res.status(404).json({ success: false, message: 'Attachment not found on this message' });
+                return;
+            }
+            const attachment = await emailService_1.default.getReceivedAttachment(message.resendEmailId, attachmentId);
+            res.status(200).json({
+                success: true,
+                data: {
+                    filename: attachment.filename,
+                    contentType: attachment.content_type,
+                    downloadUrl: attachment.download_url,
+                    expiresAt: attachment.expires_at,
+                },
+            });
+        }
+        catch (error) {
+            const err = error;
+            console.error('[INBOX] Error fetching attachment:', error);
+            res.status(500).json({ success: false, message: err.message || 'Error fetching attachment' });
+        }
+    }
+    /**
      * @route PUT /api/admin/inbox/:threadId/status
      * @body status: 'open' | 'closed'
      */
