@@ -19,6 +19,7 @@ import savingsRoutes from './routes/savingsRoute';
 import contactSupportRoutes from './routes/contactSupportRoutes';
 import walletRoutes from './routes/walletRoutes';
 import DailyGrowthJob from './jobs/dailyGrowthJobs';
+import webhookRoutes from './routes/webhookRoutes';
 
 
 const app: Express = express();
@@ -60,6 +61,7 @@ app.use(
   })
 );
 // Body parsing middleware with increased size limit
+app.use('/api/webhooks', webhookRoutes);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 

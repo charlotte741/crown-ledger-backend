@@ -24,6 +24,7 @@ const savingsRoute_1 = __importDefault(require("./routes/savingsRoute"));
 const contactSupportRoutes_1 = __importDefault(require("./routes/contactSupportRoutes"));
 const walletRoutes_1 = __importDefault(require("./routes/walletRoutes"));
 const dailyGrowthJobs_1 = __importDefault(require("./jobs/dailyGrowthJobs"));
+const webhookRoutes_1 = __importDefault(require("./routes/webhookRoutes"));
 const app = (0, express_1.default)();
 const PORT = process.env.BACKEND_PORT || 5000;
 // Stripe webhook route - must be BEFORE express.json() middleware
@@ -56,6 +57,7 @@ app.use((0, cors_1.default)({
     exposedHeaders: ["x-new-access-token", "x-refresh-token"],
 }));
 // Body parsing middleware with increased size limit
+app.use('/api/webhooks', webhookRoutes_1.default);
 app.use(express_1.default.json({ limit: '10mb' }));
 app.use(express_1.default.urlencoded({ extended: true, limit: '10mb' }));
 // Debug middleware to log requests

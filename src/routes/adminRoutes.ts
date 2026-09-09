@@ -2,6 +2,7 @@ import { Router } from 'express';
 import AdminController from '../controllers/adminController';
 import { authenticateToken } from '../middleware/authMiddleware';
 import { adminAuthMiddleware } from '../middleware/adminAuthMiddleware';
+import InboxController from '../controllers/inboxController';
 
 
 const router = Router();
@@ -72,5 +73,10 @@ router.put('/withdrawals/:withdrawalId/review', AdminController.reviewWithdrawal
 router.get('/wallet/lookup/:accountNumber', AdminController.lookupWalletByAccountNumber);
 
 router.post('/user/:userId/send-email', AdminController.sendCustomEmailToUser);
+
+router.get('/inbox', InboxController.listThreads);
+router.get('/inbox/:threadId', InboxController.getThread);
+router.post('/inbox/:threadId/reply', InboxController.replyToThread);
+router.put('/inbox/:threadId/status', InboxController.updateThreadStatus);
 
 export default router;

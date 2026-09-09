@@ -15,12 +15,12 @@ class EmailService {
                 to: options.to,
                 subject: options.subject,
                 html: options.html,
+                headers: options.headers, // NEW
                 replyTo: options.replyTo ??
                     process.env.EMAIL_REPLY_TO ??
                     process.env.EMAIL_FROM_ADDRESS ??
                     "woolleycharlotte08@gmail.com",
             });
-            ;
             if (error) {
                 throw new Error(error.message);
             }
@@ -31,6 +31,31 @@ class EmailService {
             console.error('[EMAIL] Error sending email:', errorMessage);
             throw error;
         }
+    }
+    /**
+   * Verifies a Resend inbound/lifecycle webhook using Svix-style signing.
+   * `payload` MUST be the raw request body string, not a re-serialized object.
+   */
+    verifyInboundWebhook(payload, headers) {
+        if (!process.env.RESEND_WEBHOOK_SECRET) {
+            throw new Error('RESEND_WEBHOOK_SECRET environment variable is not set.');
+        }
+        return this.resend.webhooks.verify({
+            payload,
+            headers,
+            webhookSecret: process.env.RESEND_WEBHOOK_SECRET,
+        });
+    }
+    /**
+     * Fetches the full body/attachments for a received email. The webhook
+     * payload itself only carries metadata (sender, recipient, subject).
+     */
+    async getReceivedEmail(emailId) {
+        const { data, error } = await this.resend.emails.receiving.get(emailId);
+        if (error) {
+            throw new Error(error.message);
+        }
+        return data;
     }
     logoHeaderHtml() {
         return `

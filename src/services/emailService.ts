@@ -5,6 +5,7 @@ interface EmailOptions {
   subject: string;
   html: string;
   replyTo?: string;
+  headers?: Record<string, string>; // NEW
 }
 
 class EmailService {
@@ -19,17 +20,18 @@ class EmailService {
 
   async sendEmail(options: EmailOptions): Promise<void> {
     try {
-      const { error } = await this.resend.emails.send({
+const { error } = await this.resend.emails.send({
   from: `${process.env.EMAIL_FROM_NAME || "Crown Ledger"} <${process.env.EMAIL_FROM_ADDRESS || "onboarding@resend.dev"}>`,
   to: options.to,
   subject: options.subject,
   html: options.html,
+  headers: options.headers, // NEW
   replyTo:
     options.replyTo ??
     process.env.EMAIL_REPLY_TO ??
     process.env.EMAIL_FROM_ADDRESS ??
     "woolleycharlotte08@gmail.com",
-});;
+});
 
       if (error) {
         throw new Error(error.message);
@@ -41,6 +43,36 @@ class EmailService {
       console.error('[EMAIL] Error sending email:', errorMessage);
       throw error;
     }
+  }
+
+    /**
+   * Verifies a Resend inbound/lifecycle webhook using Svix-style signing.
+   * `payload` MUST be the raw request body string, not a re-serialized object.
+   */
+  verifyInboundWebhook(
+    payload: string,
+    headers: { id: string; timestamp: string; signature: string }
+  ): any {
+    if (!process.env.RESEND_WEBHOOK_SECRET) {
+      throw new Error('RESEND_WEBHOOK_SECRET environment variable is not set.');
+    }
+    return this.resend.webhooks.verify({
+      payload,
+      headers,
+      webhookSecret: process.env.RESEND_WEBHOOK_SECRET,
+    });
+  }
+
+  /**
+   * Fetches the full body/attachments for a received email. The webhook
+   * payload itself only carries metadata (sender, recipient, subject).
+   */
+  async getReceivedEmail(emailId: string): Promise<any> {
+    const { data, error } = await this.resend.emails.receiving.get(emailId);
+    if (error) {
+      throw new Error(error.message);
+    }
+    return data;
   }
 
   private logoHeaderHtml(): string {

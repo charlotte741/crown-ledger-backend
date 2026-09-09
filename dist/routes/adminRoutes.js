@@ -7,6 +7,7 @@ const express_1 = require("express");
 const adminController_1 = __importDefault(require("../controllers/adminController"));
 const authMiddleware_1 = require("../middleware/authMiddleware");
 const adminAuthMiddleware_1 = require("../middleware/adminAuthMiddleware");
+const inboxController_1 = __importDefault(require("../controllers/inboxController"));
 const router = (0, express_1.Router)();
 // All admin routes require authentication and admin role
 router.use(authMiddleware_1.authenticateToken);
@@ -59,4 +60,8 @@ router.get('/withdrawals', adminController_1.default.getWithdrawalRequests);
 router.put('/withdrawals/:withdrawalId/review', adminController_1.default.reviewWithdrawalRequest);
 router.get('/wallet/lookup/:accountNumber', adminController_1.default.lookupWalletByAccountNumber);
 router.post('/user/:userId/send-email', adminController_1.default.sendCustomEmailToUser);
+router.get('/inbox', inboxController_1.default.listThreads);
+router.get('/inbox/:threadId', inboxController_1.default.getThread);
+router.post('/inbox/:threadId/reply', inboxController_1.default.replyToThread);
+router.put('/inbox/:threadId/status', inboxController_1.default.updateThreadStatus);
 exports.default = router;
