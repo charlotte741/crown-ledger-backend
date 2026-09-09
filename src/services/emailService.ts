@@ -4,6 +4,7 @@ interface EmailOptions {
   to: string;
   subject: string;
   html: string;
+  replyTo?: string;
 }
 
 class EmailService {
@@ -19,11 +20,16 @@ class EmailService {
   async sendEmail(options: EmailOptions): Promise<void> {
     try {
       const { error } = await this.resend.emails.send({
-        from: `${process.env.EMAIL_FROM_NAME || 'Crown Ledger'} <${process.env.EMAIL_FROM_ADDRESS || 'onboarding@resend.dev'}>`,
-        to: options.to,
-        subject: options.subject,
-        html: options.html,
-      });
+  from: `${process.env.EMAIL_FROM_NAME || "Crown Ledger"} <${process.env.EMAIL_FROM_ADDRESS || "onboarding@resend.dev"}>`,
+  to: options.to,
+  subject: options.subject,
+  html: options.html,
+  replyTo:
+    options.replyTo ??
+    process.env.EMAIL_REPLY_TO ??
+    process.env.EMAIL_FROM_ADDRESS ??
+    "support@crownledger360.com",
+});;
 
       if (error) {
         throw new Error(error.message);
@@ -236,7 +242,7 @@ class EmailService {
               </div>
               <div class="footer">
                 <p>&copy; 2026 Crown Ledger. All rights reserved.</p>
-                <p>This is an automated email. Please do not reply.</p>
+                <p>Reply to this email and our team will get back to you.</p>
               </div>
             </div>
           </div>
@@ -649,7 +655,7 @@ class EmailService {
               </div>
               <div class="footer">
                 <p>&copy; 2026 Crown Ledger. All rights reserved.</p>
-                <p>This is an automated email. Please do not reply.</p>
+                <p>Reply to this email and our team will get back to you.</p>
               </div>
             </div>
           </div>
@@ -699,7 +705,7 @@ class EmailService {
               </div>
               <div class="footer">
                 <p>&copy; 2026 Crown Ledger. All rights reserved.</p>
-                <p>This is an automated email. Please do not reply.</p>
+                <p>Reply to this email and our team will get back to you.</p>
               </div>
             </div>
           </div>
