@@ -159,7 +159,7 @@ class ContactSupportService {
      */
     async sendAdminNotificationEmail(ticket) {
         try {
-            const adminEmail = process.env.ADMIN_EMAIL || 'okwolig60@gmail.com';
+            const adminEmail = process.env.ADMIN_EMAIL || '';
             const html = emailService_1.default.generateSupportTicketAdminEmailHtml(ticket);
             await emailService_1.default.sendEmail({
                 to: adminEmail,

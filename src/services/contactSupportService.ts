@@ -190,7 +190,7 @@ class ContactSupportService {
    */
   private async sendAdminNotificationEmail(ticket: IContactSupport): Promise<void> {
     try {
-      const adminEmail = process.env.ADMIN_EMAIL || 'okwolig60@gmail.com';
+      const adminEmail = process.env.ADMIN_EMAIL || '';
       const html = emailService.generateSupportTicketAdminEmailHtml(ticket);
 
       await emailService.sendEmail({
